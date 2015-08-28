@@ -1,0 +1,32 @@
+<!doctype html>
+<html>
+  <head>
+    <title>QuickCalView</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    
+    <script src="popup.js"></script>
+    <script src="https://apis.google.com/js/client.js?onload=onPopupLoad"></script>
+  </head>
+  <body>
+    <div id="authorize-div" style="display: none">
+      <span>Authorize access to Google Calendar API</span>
+      <!--Button for the user to click to initiate auth sequence -->
+      <button id="authorize-button">
+        Authorize
+      </button>
+    </div>
+    <div id="content-div" style="display: none">
+      <div id="refresh-div">
+        <button id="refresh-button">Refresh</button>
+      </div>
+      <div id="create-event-div">
+				<input type="text" id="create-event-text"></input>
+        <button id="create-event-button">Create Event</button>
+      </div>
+      <div id="event-list-div">
+        
+      </div>
+    </div>
+  </body>
+</html>
+
