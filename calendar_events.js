@@ -88,34 +88,11 @@ var EventManager = function(){
 		this.events.push(e);
 		this.sortEvents();
 
-		var postURL = "https://www.googleapis.com/";
 		if(e.getType() == "task"){
-			postURL += "tasks/v1/lists/@default/tasks";
+			api_postTask(this.authToken, e);
 		} else {
-			postURL += "calendar/v3/calendars/primary/events";
+			api_postCalendarEvent(this.authToken, e);
 		}
-
-		console.log("Post URL: " + postURL);
-  
-		var xhr = new XMLHttpRequest();
-		
-		xhr.responseType = 'json';
-		xhr.open('POST', postURL);
-		xhr.setRequestHeader('Authorization', 'Bearer ' + this.authToken);
-		xhr.setRequestHeader('Content-Type', 'application/json');
-		xhr.send(JSON.stringify(e.getCreateBody()));
-		console.log("BODY: " + JSON.stringify(e.getCreateBody()));
-  
-		xhr.onerror = function () {
-			console.log("HTTP POST ERROR:");
-			console.log(this);
-		};
-
-		xhr.onload = function() {
-			console.log("HTTP POST SUCCESS:");
-			console.log(this.response);
-			e.id = this.response.id;
-		};
   };
 
 	this.deleteEvent = function(eventId){
@@ -133,39 +110,10 @@ var EventManager = function(){
 		}
 		this.events.splice(i, 1);
 
-		var xhr = new XMLHttpRequest();
-		xhr.responseType = 'json';
-	
-		xhr.onerror = function () {
-			console.log("HTTP DEL ERROR:");
-			console.log(this);
-		};
-
-		xhr.onload = function() {
-			console.log("HTTP DEL SUCCESS:");
-			console.log(this.response);
-		};
-
-		var delURL = "https://www.googleapis.com/";
 		if(e.getType() == "task"){
-			delURL += "tasks/v1/lists/@default/tasks/";
-			delURL += e.id;
-			console.log("PUT " + delURL);
-
-			xhr.responseType = 'json';
-			xhr.open('PUT', delURL);
-			xhr.setRequestHeader('Authorization', 'Bearer ' + this.authToken);
-			xhr.setRequestHeader('Content-Type', 'application/json');
-			xhr.send(JSON.stringify( { id: e.id, status: "completed" } ));
+			api_putTaskCompleted(this.authToken, e);
 		} else {
-			delURL += "calendar/v3/calendars/primary/events/";
-			delURL += e.id;
-			console.log("DEL " + delURL);
-
-			xhr.responseType = 'json';
-			xhr.open('DELETE', delURL);
-			xhr.setRequestHeader('Authorization', 'Bearer ' + this.authToken);
-			xhr.send();
+			api_deleteCalendarEvent(this.authToken, e);
 		}
 	};
   
@@ -188,6 +136,9 @@ var Task = function(){
 		var colon = str.indexOf(":");
 		if (str.toLowerCase().startsWith("due")){
 			this.dueDate = moment(str.substring(4, colon), "MMM D");
+			if(this.dueDate.isBefore(moment.tz(EST))){
+				this.dueDate.add(1, "years");
+			}
 		} else {
 			this.dueDate = null;
 		}
@@ -207,7 +158,7 @@ var Task = function(){
 		} else {
 			this.dueDate = null;
 		}
-    
+
     this.stringRep = this.toString();
     return this;
   };

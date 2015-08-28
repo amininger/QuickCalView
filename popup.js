@@ -1,31 +1,62 @@
 var localData = null;
 
+// Receives a message from the background process
 chrome.extension.onRequest.addListener(
-    function(request, sender, sendResponse){
-      if(request.msg === "authorization-failure"){
-        showAuthDiv();
-      } else if(request.msg === "event-data"){
-        console.log("GOT DATA");
-        console.log(request.immediate);
-        showContentDiv();
-        populateData(request.data);
-      }
-    }
+	function(request, sender, sendResponse){
+		console.log("popup: received message " + request.type);
+		if(request.type === AUTH_FAILURE){
+			showAuthDiv();
+		} else if(request.type === EVENT_DATA){
+			showContentDiv();
+			populateData(request.data);
+		}
+	}
 );
 
+// Called when the popup is loaded
 function onPopupLoad(){
-  console.log("onPopupLoad()");
+  console.log("popup: onPopupLoad()");
  
   addButtonListeners();
   showAuthDiv();
    
-  chrome.extension.sendRequest(
-  { msg: "data-request"
-  });
+  chrome.extension.sendRequest({ type: DATA_REQUEST });
 }
 
+//========================================
+// Switch between displaying the two divs
+//========================================
+
+// showAuthDiv
+//   Shows the div with an authorization button
+function showAuthDiv(){
+  console.log("popup: showAuthDiv()");
+  
+  var authDiv = document.getElementById('authorize-div');
+  authDiv.style.display = 'inline';
+    
+  var contentDiv = document.getElementById('content-div');
+  contentDiv.style.display = 'none';
+}
+
+// showContentDiv
+//   Shows the div with the event information
+function showContentDiv(){
+  console.log("popup: showContentDiv()");
+  
+  var authDiv = document.getElementById('authorize-div');
+  authDiv.style.display = 'none';
+    
+  var contentDiv = document.getElementById('content-div');
+  contentDiv.style.display = 'inline';
+}
+
+//========================================
+// Button Event Handlers
+//========================================
+
 function addButtonListeners(){
-  console.log("addButtonListeners()");
+  console.log("popup: addButtonListeners()");
   
   var authButton = document.getElementById('authorize-button');
   authButton.addEventListener("click", onAuthorizeClick);
@@ -37,28 +68,44 @@ function addButtonListeners(){
   createEventButton.addEventListener("click", onCreateEventClick);
 }
 
-function showAuthDiv(){
-  console.log("showAuthDiv()");
+// onAuthorizeClick(e)
+//   Send an authorization request to the background process
+function onAuthorizeClick(event){
+  console.log("popup: onAuthorizeClick()");
   
-  var authDiv = document.getElementById('authorize-div');
-  authDiv.style.display = 'inline';
-    
-  var contentDiv = document.getElementById('content-div');
-  contentDiv.style.display = 'none';
+  chrome.extension.sendRequest({ type: REFRESH_DATA });
+  return false;
 }
 
-function showContentDiv(){
-  console.log("showContentDiv()");
-  
-  var authDiv = document.getElementById('authorize-div');
-  authDiv.style.display = 'none';
-    
-  var contentDiv = document.getElementById('content-div');
-  contentDiv.style.display = 'inline';
+// onRefreshClick(e)
+//   Tells the background process to refresh the data
+function onRefreshClick(event){
+  console.log("popup: onRefreshClick()");
+
+  chrome.extension.sendRequest({ type: REFRESH_DATA });
+  return false;
 }
 
+// onCreateEventClick
+//   Grabs the text in the create-event-text field and 
+//     sends it to the background process to create an event
+function onCreateEventClick(event){
+  console.log("popup: onCreateEventClick()");
+
+	var createEventText = document.getElementById("create-event-text");
+	var eventInfo = createEventText.value;
+	createEventText = "";
+
+  chrome.extension.sendRequest({ type: CREATE_EVENT, data: eventInfo });
+	return false;
+}
+
+//========================================
+// Button Event Handlers
+//========================================
 function populateData(data){
-  console.log("populateData");
+  console.log("popup: populateData()");
+	console.log("  data = ");
   console.log(data);
   
   var eventListDiv = document.getElementById('event-list-div');
@@ -95,10 +142,7 @@ function populateData(data){
 		delButton.innerHTML = "X";
 		delButton.data = d;
 		delButton.addEventListener("click", function(e){
-			chrome.extension.sendRequest(
-			{ msg: "delete-event",
-				eventId: e.target.data.id
-			});
+			chrome.extension.sendRequest({ type: "delete-event", data: e.target.data.id });
 		});
 		rightDiv.appendChild(delButton);
 
@@ -111,38 +155,3 @@ function populateData(data){
   });
 }
 
-function onRefreshClick(event){
-  console.log("onRefreshClick()");
-  console.log(event);
-  
-  chrome.extension.sendRequest(
-  { msg: "refresh-data"
-  });
-  return false;
-}
-
-function onCreateEventClick(event){
-  console.log("onCreateEventClick()");
-  console.log(event);
-
-	var createEventText = document.getElementById("create-event-text");
-	var eventInfo = createEventText.value;
-
-  chrome.extension.sendRequest(
-  { msg: "create-event",
-		eventInfo: eventInfo
-  });
-
-	createEventText = "";
-	return false;
-}
-
-function onAuthorizeClick(event){
-  console.log("onAuthorizeClick()");
-  console.log(event);
-  
-  chrome.extension.sendRequest(
-  { msg: "authorization-request"
-  });
-  return false;
-}

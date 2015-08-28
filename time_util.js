@@ -1,4 +1,3 @@
-var defaultTimeZone = "-5:00";
 var defaultDateTime = moment.tz("2000-01-01", "America/New_York");
 var EST = "America/New_York";
 

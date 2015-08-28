@@ -3,47 +3,63 @@ var eventManager = new EventManager();
 var authToken = null;
 
 chrome.extension.onRequest.addListener(
-    function(request, sender, sendResponse){
-    console.log("Background: GOT " + request.msg);
-      if(request.msg === "authorization-request"){
-        getAuthorization(true);
-      } else if(request.msg === "data-request"){
-        loadData();
-      } else if(request.msg === "refresh-data"){
-        getAuthorization(true);
-      } else if(request.msg === "create-event"){
-				createEvent(request.eventInfo);
-			} else if(request.msg === "delete-event"){
-				deleteEvent(request.eventId);
-			}
-    }
+	function(request, sender, sendResponse){
+	console.log("background: received message " + request.type);
+		if(request.type === DATA_REQUEST){
+			// DATA_REQUEST: send event data to the popup
+			sendData();
+
+		} else if(request.type === REFRESH_DATA){
+			// REFRESH_DATA: retrieve data from google and update the popup
+			getAuthorization(true);
+
+		} else if(request.type === CREATE_EVENT){
+			// CREATE_EVENT: create the event/task and send it to google calendar
+			eventManager.createEvent(request.data);
+			sendData();
+			
+		} else if(request.type === DELETE_EVENT){
+			// DELETE_EVENT: deletes the event/task from google calendar
+			eventManager.deleteEvent(request.data);
+			sendData();
+		}
+	}
 );
 
 function getAuthorization(interactive){
-  console.log("getAuthorization()");
-  chrome.identity.getAuthToken( 
-    { 'interactive': interactive }, authorizationCallback);
+  console.log("background: getAuthorization()");
+  chrome.identity.getAuthToken({ 'interactive': interactive }, authorizationCallback);
 }
 
 function authorizationCallback(token) {
-  console.log("authorizationCallback()");
-  console.log(token);
+  console.log("background: authorizationCallback()");
 
 	authToken = token;
 	eventManager.setAuthToken(token);
 
   if (token) {
     eventManager.reset();
-    fetchCalendarData(token);
-    fetchTaskData(token);
+
+		api_getTasks(token, function(data){
+			eventManager.updateTaskData(data);
+			if(eventManager.isReady()){
+				sendData();
+			}
+		});
+
+		api_getCalendarEvents(token, function(data){
+			eventManager.updateCalendarData(data);
+			if(eventManager.isReady()){
+				sendData();
+			}
+		});
   } else {
-    chrome.extension.sendRequest(
-      { msg: "authorization-failure" });
+    chrome.extension.sendRequest({ type: AUTH_FAILURE });
   }
 }
 
 function loadData(){
-  console.log("loadData()");
+  console.log("background: loadData()");
   
   if(!eventManager.isReady()){
     getAuthorization(false);
@@ -52,93 +68,9 @@ function loadData(){
   }
 }
 
-
-function fetchTaskData(token){
-  console.log("fetchTaskData()");
-  
-  var reqURL = "https://www.googleapis.com/tasks/v1/lists/@default/tasks";
-  reqURL += "?showDeleted=false";
-  reqURL += "&showHidden=false";
-  reqURL += "&showCompleted=false";
-  
-  console.log(reqURL);
-  var xhr = new XMLHttpRequest();
-  
-  xhr.responseType = 'json';
-  xhr.open('GET', reqURL);
-  xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-  xhr.send();
-  
-  xhr.onerror = function () {
-    console.log("HTTP ERROR [TASK]:");
-    console.log(this);
-  };
-
-  xhr.onload = function() {
-    console.log("HTTP SUCCESS [TASK]:");
-    console.log(this.response);
-    
-    eventManager.updateTaskData(this.response);
-    if(eventManager.isReady()){
-      sendData();
-    }
-  };
-}
-
-function fetchCalendarData(token){
-  console.log("fetchCalendarData()");
-    
-  var reqURL = "https://www.googleapis.com/calendar/v3/calendars/primary/events";
-	reqURL += "?calendarId=primary";
-	reqURL += "&maxResults=200";
-	reqURL += "&orderBy=startTime";
-	reqURL += "&showDeleted=false";
-	reqURL += "&singleEvents=true";
-	reqURL += "&timeMin=" + moment.tz(EST).format(fullDateFormat);
-	
-  console.log(reqURL);
-  var xhr = new XMLHttpRequest();
-
-  xhr.responseType = 'json';
-  xhr.open('GET', reqURL);
-  xhr.setRequestHeader('Authorization', 'Bearer ' + token);
-	xhr.send();
-  
-  xhr.onerror = function () {
-    console.log("HTTP ERROR [CAL]:");
-    console.log(this);
-  };
-
-  xhr.onload = function() {
-    console.log("HTTP SUCCESS [CAL]:");
-    console.log(this.response);
-    
-    eventManager.updateCalendarData(this.response);
-    if(eventManager.isReady()){
-      sendData();
-    }
-  };
-}
-
 function sendData(){
-  console.log("sendData(): GO!");
-  chrome.extension.sendRequest(
-  { msg: "event-data",
-    data: eventManager.getEvents(),
-    immediate: true
-  });
+	chrome.extension.sendRequest(
+		{ type: EVENT_DATA, data: eventManager.getEvents() });
 }
 
-function createEvent(eventInfo){
-	console.log("createEvent('" + eventInfo + "')");
-	eventManager.createEvent(eventInfo);
-	sendData();
-}
-
-function deleteEvent(eventId){
-	console.log("deleteEvent(" + eventId + ")");
-	eventManager.deleteEvent(eventId);
-	sendData();
-}
-  
-      
+loadData();

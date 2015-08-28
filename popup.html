@@ -3,7 +3,7 @@
   <head>
     <title>QuickCalView</title>
     <link rel="stylesheet" type="text/css" href="styles.css">
-    
+    <script src="constants.js"></script>
     <script src="popup.js"></script>
     <script src="https://apis.google.com/js/client.js?onload=onPopupLoad"></script>
   </head>
@@ -16,15 +16,20 @@
       </button>
     </div>
     <div id="content-div" style="display: none">
+			<!-- Div Containing the Refresh Button -->
       <div id="refresh-div">
         <button id="refresh-button">Refresh</button>
       </div>
+
+			<!-- Div Containing the Create Event Form -->
       <div id="create-event-div">
 				<input type="text" id="create-event-text"></input>
         <button id="create-event-button">Create Event</button>
       </div>
+
+			<!-- Div Containing the Event List (Populated by javascript) -->
       <div id="event-list-div">
-        
+
       </div>
     </div>
   </body>
