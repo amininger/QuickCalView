@@ -8,3 +8,6 @@ var REFRESH_DATA = "refresh-data";
 var CREATE_EVENT = "create-event";
 var DELETE_EVENT = "delete-event";
 
+var TASK = "task";
+var CALENDAR_EVENT = "calendar-event";
+

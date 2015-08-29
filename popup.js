@@ -66,6 +66,9 @@ function addButtonListeners(){
   
   var createEventButton = document.getElementById('create-event-button');
   createEventButton.addEventListener("click", onCreateEventClick);
+
+	var createEventText = document.getElementById('create-event-text');
+	createEventText.addEventListener("keypress", onCreateEventKeypress);
 }
 
 // onAuthorizeClick(e)
@@ -94,18 +97,34 @@ function onCreateEventClick(event){
 
 	var createEventText = document.getElementById("create-event-text");
 	var eventInfo = createEventText.value;
-	createEventText = "";
+	createEventText.value = "";
 
   chrome.extension.sendRequest({ type: CREATE_EVENT, data: eventInfo });
 	return false;
 }
 
+// onCreateEventKeypress
+//   If enter is pressed, grab the text in the create-event-text field
+//     and send it to the background process
+function onCreateEventKeypress(event){
+	console.log(event.keyCode);
+	if(event.keyCode === 13){
+		console.log("popup: onCreateEventKeypress()");
+
+		var createEventText = document.getElementById("create-event-text");
+		var eventInfo = createEventText.value;
+		createEventText.value = "";
+
+		chrome.extension.sendRequest({ type: CREATE_EVENT, data: eventInfo });
+	}
+	return false;
+}
+
 //========================================
-// Button Event Handlers
+// Display the events in the popup
 //========================================
 function populateData(data){
   console.log("popup: populateData()");
-	console.log("  data = ");
   console.log(data);
   
   var eventListDiv = document.getElementById('event-list-div');
@@ -118,7 +137,6 @@ function populateData(data){
 	var i = 0;
   // Add new data
   data.forEach(function(d){
-    console.log(d);
     var newDiv = document.createElement("div");
 		newDiv.className = "event-div";
 		newDiv.style.backgroundColor = (i%2==0 ? "#8888FF" : "#5555FF");
@@ -137,9 +155,11 @@ function populateData(data){
 		var rightDiv = document.createElement("div");
 		rightDiv.className = "right-div";
 
-		var delButton = document.createElement("button");
+		var delButton = document.createElement("input");
+		delButton.type = "image";
 		delButton.className = "delete-button";
-		delButton.innerHTML = "X";
+		delButton.src = "delete.png";
+		delButton.alt = "X";
 		delButton.data = d;
 		delButton.addEventListener("click", function(e){
 			chrome.extension.sendRequest({ type: "delete-event", data: e.target.data.id });

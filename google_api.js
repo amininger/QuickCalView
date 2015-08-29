@@ -16,13 +16,11 @@ function api_getTasks(token, callback){
   
   xhr.onerror = function () {
     console.log("google_api: HTTP GET ERROR [TASK]");
-		console.log("  err info:");
     console.log(this);
   };
 
   xhr.onload = function() {
     console.log("google_api: HTTP GET SUCCESS [TASK]:");
-		console.log("  response: ");
 		console.log(this.response);
 		callback(this.response);
   };
@@ -53,13 +51,11 @@ function api_getCalendarEvents(token, callback){
   
   xhr.onerror = function () {
     console.log("google_api: HTTP GET ERROR [CAL]");
-		console.log("  err info:");
     console.log(this);
   };
 
   xhr.onload = function() {
     console.log("google_api: HTTP GET SUCCESS [CAL]");
-		console.log("  response: ");
 		console.log(this.response);
 
 		callback(this.response);
@@ -85,13 +81,11 @@ function api_postTask(token, task){
 
 	xhr.onerror = function () {
 		console.log("google_api: HTTP POST ERROR [TASK]");
-		console.log(" err info:");
 		console.log(this);
 	};
 
 	xhr.onload = function() {
 		console.log("google_api: HTTP POST SUCCESS [TASK]");
-		console.log("  response =");
 		console.log(this.response);
 
 		task.id = this.response.id;
@@ -120,13 +114,11 @@ function api_postCalendarEvent(token, calEvent){
 
 	xhr.onerror = function () {
 		console.log("google_api: HTTP POST ERROR [EVENT]");
-		console.log(" err info:");
 		console.log(this);
 	};
 
 	xhr.onload = function() {
 		console.log("google_api: HTTP POST SUCCESS [EVENT]");
-		console.log("  response =");
 		console.log(this.response);
 
 		calEvent.id = this.response.id;
@@ -156,13 +148,11 @@ function api_putTaskCompleted(token, task){
 
 	xhr.onerror = function () {
 		console.log("google_api: HTTP PUT ERROR [TASK]");
-		console.log("  err info:");
 		console.log(this);
 	};
 
 	xhr.onload = function() {
 		console.log("google_api: HTTP PUT SUCCESS [TASK]");
-		console.log("  response:");
 		console.log(this.response);
 	};
 
@@ -189,13 +179,11 @@ function api_deleteCalendarEvent(token, calEvent){
 
 	xhr.onerror = function () {
 		console.log("google_api: HTTP DELETE ERROR [EVENT]");
-		console.log("  err info:");
 		console.log(this);
 	};
 
 	xhr.onload = function() {
 		console.log("google_api: HTTP DELETE SUCCESS [EVENT]");
-		console.log("  response:");
 		console.log(this.response);
 	};
 

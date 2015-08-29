@@ -9,10 +9,6 @@ body{
   height:480px;
 }
 
-#refresh-div{
-  background-color: #FFFF88;
-}
-
 #event-list-div{
 }
 
@@ -21,22 +17,32 @@ body{
 	clear: both;
 }
 
+#refresh-button{
+	vertical-align: top;
+	margin: 2px 5px 0px 5px;
+	width: 30px;
+	height: 30px;
+}
+
 #create-event-text{
-	width: 360px;
+	vertical-align: top;
+	margin-top: 5px;
+	margin-bottom: 5px;
+	height: 20px;
+	width: 400px;
 }
 
 #create-event-button{
-	width: 120px;
+	vertical-align: top;
+	margin: 2px 5px 0px 5px;
+	height: 30px;
+	width: 30px;
 }
 
 .event-div{
 	clear: both;
 	height: 25px;
-}
-
-.right-div{
-	float: right;
-	width: 50px;
+	width: 500px;
 }
 
 .left-div{
@@ -44,15 +50,18 @@ body{
 	font-family: monospace;
 	font-size: small;
 	font-weight: bold;
-	width: 85%;
+	width: 450px;
 	padding-top: 5px;
 	padding-left: 5px;
 }
 
+.right-div{
+	float: right;
+	width: 30px;
+}
+
 .delete-button{
-	background-color: #FF0000;
 	width: 20px;
 	height: 20px;
-	font-size: medium;
 	margin-top: 2px;
 }
