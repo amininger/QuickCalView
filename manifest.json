@@ -13,6 +13,7 @@
     "scopes": ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/tasks"]
   },
   "background": {
+		"persistent": false,
     "scripts": ["moment.min.js", "moment-timezone.min.js", 
 		"constants.js", "google_api.js", "time_util.js", 
 		"calendar_events.js", "background.js"]
