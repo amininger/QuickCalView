@@ -1,6 +1,6 @@
 {
   "name": "QuickCalView",
-  "version": "1.0",
+  "version": "0.1.2",
   "manifest_version": 2,
   "browser_action": {
     "default_icon": "icon.png",
@@ -9,7 +9,7 @@
   "permissions": ["identity", "storage", "https://www.googleapis.com/*"],
   "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
   "oauth2": {
-    "client_id": "82065418705-pu9j37v7bjnguklnpn0dh2kvtnl39sb5.apps.googleusercontent.com",
+    "client_id": "82065418705-66m4rldepvv28jo1ak41v52p96uf29fs.apps.googleusercontent.com",
     "scopes": ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/tasks"]
   },
   "background": {

@@ -1,14 +1,14 @@
 var localData = null;
 
 // Receives a message from the background process
-chrome.extension.onRequest.addListener(
-	function(request, sender, sendResponse){
-		console.log("popup: received message " + request.type);
-		if(request.type === AUTH_FAILURE){
+chrome.extension.onMessage.addListener(
+	function(message, sender, sendResponse){
+		console.log("popup: received message " + message.type);
+		if(message.type === AUTH_FAILURE){
 			showAuthDiv();
-		} else if(request.type === EVENT_DATA){
+		} else if(message.type === EVENT_DATA){
 			showContentDiv();
-			populateData(request.data);
+			populateData(message.data);
 		}
 	}
 );
@@ -20,7 +20,7 @@ function onPopupLoad(){
   addButtonListeners();
   showAuthDiv();
    
-  chrome.extension.sendRequest({ type: DATA_REQUEST });
+  chrome.extension.sendMessage({ type: DATA_REQUEST });
 }
 
 //========================================
@@ -76,7 +76,7 @@ function addButtonListeners(){
 function onAuthorizeClick(event){
   console.log("popup: onAuthorizeClick()");
   
-  chrome.extension.sendRequest({ type: REFRESH_DATA });
+  chrome.extension.sendMessage({ type: REFRESH_DATA });
   return false;
 }
 
@@ -85,7 +85,7 @@ function onAuthorizeClick(event){
 function onRefreshClick(event){
   console.log("popup: onRefreshClick()");
 
-  chrome.extension.sendRequest({ type: REFRESH_DATA });
+  chrome.extension.sendMessage({ type: REFRESH_DATA });
   return false;
 }
 
@@ -99,7 +99,7 @@ function onCreateEventClick(event){
 	var eventInfo = createEventText.value;
 	createEventText.value = "";
 
-  chrome.extension.sendRequest({ type: CREATE_EVENT, data: eventInfo });
+  chrome.extension.sendMessage({ type: CREATE_EVENT, data: eventInfo });
 	return false;
 }
 
@@ -115,7 +115,7 @@ function onCreateEventKeypress(event){
 		var eventInfo = createEventText.value;
 		createEventText.value = "";
 
-		chrome.extension.sendRequest({ type: CREATE_EVENT, data: eventInfo });
+		chrome.extension.sendMessage({ type: CREATE_EVENT, data: eventInfo });
 	}
 	return false;
 }
@@ -162,7 +162,7 @@ function populateData(data){
 		delButton.alt = "X";
 		delButton.data = d;
 		delButton.addEventListener("click", function(e){
-			chrome.extension.sendRequest({ type: "delete-event", data: e.target.data.id });
+			chrome.extension.sendMessage({ type: "delete-event", data: e.target.data.id });
 		});
 		rightDiv.appendChild(delButton);
 

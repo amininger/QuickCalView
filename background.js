@@ -2,25 +2,25 @@ var eventManager = new EventManager();
 
 var authToken = null;
 
-chrome.extension.onRequest.addListener(
-	function(request, sender, sendResponse){
-	console.log("background: received message " + request.type);
-		if(request.type === DATA_REQUEST){
+chrome.extension.onMessage.addListener(
+	function(message, sender, sendResponse){
+	console.log("background: received message " + message.type);
+		if(message.type === DATA_REQUEST){
 			// DATA_REQUEST: send event data to the popup
 			sendData();
 
-		} else if(request.type === REFRESH_DATA){
+		} else if(message.type === REFRESH_DATA){
 			// REFRESH_DATA: retrieve data from google and update the popup
 			getAuthorization(true);
 
-		} else if(request.type === CREATE_EVENT){
+		} else if(message.type === CREATE_EVENT){
 			// CREATE_EVENT: create the event/task and send it to google calendar
-			eventManager.createEvent(request.data);
+			eventManager.createEvent(message.data);
 			sendData();
 			
-		} else if(request.type === DELETE_EVENT){
+		} else if(message.type === DELETE_EVENT){
 			// DELETE_EVENT: deletes the event/task from google calendar
-			eventManager.deleteEvent(request.data);
+			eventManager.deleteEvent(message.data);
 			sendData();
 		}
 	}
@@ -54,7 +54,7 @@ function authorizationCallback(token) {
 			}
 		});
   } else {
-    chrome.extension.sendRequest({ type: AUTH_FAILURE });
+    chrome.extension.sendMessage({ type: AUTH_FAILURE });
   }
 }
 
@@ -69,7 +69,7 @@ function loadData(){
 }
 
 function sendData(){
-	chrome.extension.sendRequest(
+	chrome.extension.sendMessage(
 		{ type: EVENT_DATA, data: eventManager.getEvents() });
 }
 
