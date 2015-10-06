@@ -17,3 +17,7 @@ function getDOW(m){
 	return dayOfWeek[m.day()];
 }
 
+function curTZ(){
+	return (jstz.determine()).name();
+}
+

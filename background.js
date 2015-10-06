@@ -70,7 +70,7 @@ function loadData(){
 
 function sendData(){
 	chrome.extension.sendMessage(
-		{ type: EVENT_DATA, data: eventManager.getEvents() });
+		{ type: EVENT_DATA, data: eventManager.getEvents(), timeZone: curTZ() });
 }
 
 loadData();

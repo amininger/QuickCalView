@@ -154,7 +154,7 @@ var Task = function(){
 		var colon = str.indexOf(":");
 		if (str.toLowerCase().startsWith("due")){
 			this.dueDate = moment(str.substring(4, colon), "MMM D");
-			if(this.dueDate.isBefore(moment.tz(EST))){
+			if(this.dueDate.isBefore(moment.tz(curTZ()))){
 				this.dueDate.add(1, "years");
 			}
 		} else {
@@ -221,8 +221,8 @@ var CalendarEvent = function(){
   this.id = null;
   this.summary = "";
   
-  this.start = moment.tz(EST);
-  this.end = moment.tz(EST);
+  this.start = moment.tz(curTZ());
+  this.end = moment.tz(curTZ());
       
 	// Create the calendar event from a string representation
 	// Format: 'Sep 24: <description>' - Full day event
@@ -244,32 +244,32 @@ var CalendarEvent = function(){
 			if(dash != -1){
 				startStr = prefix.substring(0, dash);
 			}
-			this.start = moment.tz(startStr, "MMM D @H.mm", EST);
+			this.start = moment.tz(startStr, "MMM D @H.mm", curTZ());
 
 			if(dash == -1){
 				this.end = this.start.clone().add(1, "hours");
 			} else {
 				var endStr = prefix.substring(0, at) + prefix.substring(dash+1);
-				this.end = moment.tz(endStr, "MMM D @H.mm", EST);
+				this.end = moment.tz(endStr, "MMM D @H.mm", curTZ());
 			}
 		} else if(dash != -1){
 			// Multi-day Event
 			var month = prefix.substring(0, 4);
 			var d1 = prefix.substring(4, dash);
 			var d2 = prefix.substring(dash);
-			this.start = moment.tz(month + d1, "MMM D", EST);
-			this.end = moment.tz(month + d2, "MMM D", EST);
+			this.start = moment.tz(month + d1, "MMM D", curTZ());
+			this.end = moment.tz(month + d2, "MMM D", curTZ());
 			if(this.start.date() > this.end.date()){
 				this.end.add(1, "months");
 			}
 			this.end.add(1, "days");
 		} else {
 			// Single-day Event
-			this.start = moment.tz(prefix, "MMM D", EST);
+			this.start = moment.tz(prefix, "MMM D", curTZ());
 			this.end = this.start.clone().add(1, "days");
 		}
 
-		var now = moment.tz(EST);
+		var now = moment.tz(curTZ());
 		if(this.start.isBefore(now)){
 			this.start.add(1, "years");
 			this.end.add(1, "years");
@@ -287,15 +287,15 @@ var CalendarEvent = function(){
     this.summary = obj.summary;
 
 		if("date" in obj.start){
-			this.start = moment.tz(obj.start.date, EST);
+			this.start = moment.tz(obj.start.date, curTZ());
 		} else {
-			this.start = moment.tz(obj.start.dateTime, EST);
+			this.start = moment.tz(obj.start.dateTime, curTZ());
 		}
 
 		if("date" in obj.end){
-			this.end = moment.tz(obj.end.date, EST);
+			this.end = moment.tz(obj.end.date, curTZ());
 		} else {
-			this.end = moment.tz(obj.end.dateTime, EST);
+			this.end = moment.tz(obj.end.dateTime, curTZ());
 		}
     
     this.stringRep = this.toString();

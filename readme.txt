@@ -1,6 +1,6 @@
 QuickCalView Chrome Extension
 
-This is a simple chrome extension I created to provide a quick view of upcoming calendar events + tasks, and to create new ones. This is for personal use, so it is not intended for wide use. It assumes the user is in the eastern time zone. 
+This is a simple chrome extension I created to provide a quick view of upcoming calendar events + tasks, and to create new ones. This is for personal use, so it is not intended for wide use.  
 
 There are 4 types of items this works with:
 
@@ -53,8 +53,13 @@ Thanks to the following:
 Moment:
 moment.js and moment.tz.js libraries, 
 freely provided under MIT license
+http://momentjs.com
 
-Icon: 
+jsTimezoneDetect:
+jstz.js library freely provided under MIT license
+http://bitbucket.org/pellepim/jstimezonedetect
+
+Icons: 
 Thanks to paomedia (iconfinder.com/paomedia)
 Used under Creative Commons License Attribution 3.0 Unported
 [creativecommons.org/licenses/by/3.0]

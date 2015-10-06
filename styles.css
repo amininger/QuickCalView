@@ -7,13 +7,22 @@ html{
 body{
   width:500px;
   height:480px;
+	color: #000000;
+}
+
+#info-div{
+	font-family: monospace;
+	font-size: small;
+	font-weight: bold;
+	color: #FFFFFF;
+  background-color: #4CAF50;
 }
 
 #event-list-div{
 }
 
 #create-event-div{
-  background-color: #88FF88;
+  background-color: #4CAF50;
 	clear: both;
 }
 
@@ -41,13 +50,15 @@ body{
 
 .event-div{
 	clear: both;
-	height: 25px;
+	height: 30px;
 	width: 500px;
+	color: #FFFFFF;
+	margin-top: 5px;
 }
 
 .left-div{
 	float: left;
-	font-family: monospace;
+	font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: small;
 	font-weight: bold;
 	width: 450px;

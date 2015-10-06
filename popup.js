@@ -8,7 +8,7 @@ chrome.extension.onMessage.addListener(
 			showAuthDiv();
 		} else if(message.type === EVENT_DATA){
 			showContentDiv();
-			populateData(message.data);
+			populateData(message.data, message.timeZone);
 		}
 	}
 );
@@ -123,9 +123,12 @@ function onCreateEventKeypress(event){
 //========================================
 // Display the events in the popup
 //========================================
-function populateData(data){
+function populateData(data, timeZone){
   console.log("popup: populateData()");
   console.log(data);
+
+	var infoDiv = document.getElementById('info-div');
+	infoDiv.innerHTML = "&nbspTimeZone: " + timeZone;
   
   var eventListDiv = document.getElementById('event-list-div');
   
@@ -139,7 +142,7 @@ function populateData(data){
   data.forEach(function(d){
     var newDiv = document.createElement("div");
 		newDiv.className = "event-div";
-		newDiv.style.backgroundColor = (i%2==0 ? "#8888FF" : "#5555FF");
+		newDiv.style.backgroundColor = (i%2==0 ? "#0288D1" : "#03A9F4");
 
 		// BEGIN: leftDiv
 		var leftDiv = document.createElement("div");
