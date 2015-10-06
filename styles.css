@@ -7,7 +7,7 @@ html{
 body{
   width:500px;
   height:480px;
-	color: #000000;
+  background-color: #E0F2F1;
 }
 
 #info-div{
@@ -15,14 +15,14 @@ body{
 	font-size: small;
 	font-weight: bold;
 	color: #FFFFFF;
-  background-color: #4CAF50;
+   background-color: #00796B;
 }
 
 #event-list-div{
 }
 
 #create-event-div{
-  background-color: #4CAF50;
+  background-color: #00796B;
 	clear: both;
 }
 
@@ -52,7 +52,7 @@ body{
 	clear: both;
 	height: 30px;
 	width: 500px;
-	color: #FFFFFF;
+	color: #000000;
 	margin-top: 5px;
 }
 

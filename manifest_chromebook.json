@@ -1,0 +1,21 @@
+{
+  "name": "QuickCalView",
+  "version": "1.0.3",
+  "manifest_version": 2,
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+  "permissions": ["identity", "storage", "https://www.googleapis.com/*"],
+  "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'",
+  "oauth2": {
+    "client_id": "82065418705-nn8qrtf0e7qp10r8otelbvjts55242t5.apps.googleusercontent.com",
+    "scopes": ["https://www.googleapis.com/auth/calendar", "https://www.googleapis.com/auth/tasks"]
+  },
+  "background": {
+		"persistent": false,
+    "scripts": ["moment.min.js", "moment-timezone.min.js", "jstz-1.0.4.min.js", 
+		"constants.js", "google_api.js", "time_util.js", 
+		"calendar_events.js", "background.js"]
+  }
+}

@@ -142,7 +142,7 @@ function populateData(data, timeZone){
   data.forEach(function(d){
     var newDiv = document.createElement("div");
 		newDiv.className = "event-div";
-		newDiv.style.backgroundColor = (i%2==0 ? "#0288D1" : "#03A9F4");
+		newDiv.style.backgroundColor = (i%2==0 ? "#80CBC4" : "#B2DFDB");
 
 		// BEGIN: leftDiv
 		var leftDiv = document.createElement("div");
