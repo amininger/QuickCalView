@@ -9,6 +9,7 @@ var EventManager = function(){
   this.ready = false;
   this.taskData = null;
   this.calendarData = null;
+  this.authToken = null;
   
   this.isReady = function(){
     return this.ready;
@@ -96,11 +97,13 @@ var EventManager = function(){
 		this.sortEvents();
 
 		// Tell the google api to create the event
-		if(e.getType() === TASK){
-			api_postTask(this.authToken, e);
-		} else {
-			api_postCalendarEvent(this.authToken, e);
-		}
+    if(this.authToken != null){
+      if(e.getType() === TASK){
+        api_postTask(this.authToken, e);
+      } else {
+        api_postCalendarEvent(this.authToken, e);
+      }
+    }
   };
 
 	// Delete the event with the given id
@@ -154,7 +157,7 @@ var Task = function(){
 		var colon = str.indexOf(":");
 		if (str.toLowerCase().startsWith("due")){
 			this.dueDate = moment(str.substring(4, colon), "MMM D");
-			if(this.dueDate.isBefore(moment.tz(curTZ()))){
+			if(this.dueDate.isBefore(moment.tz(curTZ()).subtract(1, "days"))){
 				this.dueDate.add(1, "years");
 			}
 		} else {
@@ -164,6 +167,7 @@ var Task = function(){
 		this.title = str.substring(colon+2);
     
     this.stringRep = this.toString();
+    this.sortTime = this.getTime().format(fullDateFormat);
     return this;
   };
   
@@ -179,6 +183,7 @@ var Task = function(){
 		}
 
     this.stringRep = this.toString();
+    this.sortTime = this.getTime().format(fullDateFormat);
     return this;
   };
   
@@ -195,6 +200,14 @@ var Task = function(){
 	this.getType = function(){
 		return TASK;
 	}
+
+  this.getTime = function(){
+    if(this.dueDate == null){
+      return moment.tz("2000-01-01", "America/New_York", curTZ());
+    } else {
+      return this.dueDate;
+    }
+  }
   
 	// Calculate a string to use when sorting the events (timestamp)
   this.calcSortKey = function(){
@@ -270,7 +283,7 @@ var CalendarEvent = function(){
 		}
 
 		var now = moment.tz(curTZ());
-		if(this.start.isBefore(now)){
+		if(this.end.isBefore(now)){
 			this.start.add(1, "years");
 			this.end.add(1, "years");
 		}
@@ -278,6 +291,7 @@ var CalendarEvent = function(){
 		this.summary = str.substring(str.indexOf(":") + 2);
     
     this.stringRep = this.toString();
+    this.sortTime = this.getTime().format(fullDateFormat);
     return this;
   };
   
@@ -299,6 +313,7 @@ var CalendarEvent = function(){
 		}
     
     this.stringRep = this.toString();
+    this.sortTime = this.getTime().format(fullDateFormat);
     return this;
   };
   
@@ -326,6 +341,11 @@ var CalendarEvent = function(){
     str += ": " + this.summary;
     return str;
   };
+
+  this.getTime = function(){
+    return this.start;
+  }
+
 
 	// Returns either TASK or CALENDAR_EVENT
 	this.getType = function(){

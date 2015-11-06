@@ -18,9 +18,11 @@ function onPopupLoad(){
   console.log("popup: onPopupLoad()");
  
   addButtonListeners();
-  showAuthDiv();
+  //showAuthDiv();
+  showContentDiv();
    
-  chrome.extension.sendMessage({ type: DATA_REQUEST });
+  //chrome.extension.sendMessage({ type: DATA_REQUEST });
+  chrome.extension.sendMessage({ type: TEST_DATA_REQUEST });
 }
 
 //========================================
@@ -136,43 +138,78 @@ function populateData(data, timeZone){
   while (eventListDiv.firstChild) {
     eventListDiv.removeChild(eventListDiv.firstChild);
   }
+
+  var today = moment.tz(curTZ()).startOf('day').add(1, "day");
+  var week = moment.tz(curTZ()).startOf('day').add(7, "day");
+
+  var addedHeader = false;
+  var sectionType = TODO_SECTION;
   
 	var i = 0;
   // Add new data
   data.forEach(function(d){
+    if(!addedHeader){
+      var todoDiv = document.createElement("div");
+      todoDiv.appendChild(document.createTextNode(sectionType));
+      eventListDiv.appendChild(todoDiv);
+      addedHeader = true;
+    }
+
+    var itemType;
+    if(d.stringRep.startsWith("todo")){
+      itemType = TODO_SECTION;
+    } else if(moment.tz(d.sortTime, curTZ()).isBefore(today)){
+      itemType = TODAY_SECTION;
+    } else if(moment.tz(d.sortTime, curTZ()).isBefore(week)){
+      itemType = WEEK_SECTION;
+    } else {
+      itemType = OTHERS_SECTION;
+    }
+
+    if(itemType != sectionType){
+      sectionType = itemType;
+      addedHeader = false;
+    }
+
     var newDiv = document.createElement("div");
-		newDiv.className = "event-div";
-		newDiv.style.backgroundColor = (i%2==0 ? "#80CBC4" : "#B2DFDB");
-
-		// BEGIN: leftDiv
-		var leftDiv = document.createElement("div");
-		leftDiv.className = "left-div";
-
-		var textNode = document.createTextNode(d.stringRep + "\n");
-		leftDiv.appendChild(textNode);
-
-		newDiv.appendChild(leftDiv);
-		// END: leftDiv
-
-		// BEGIN: rightDiv
-		var rightDiv = document.createElement("div");
-		rightDiv.className = "right-div";
-
-		var delButton = document.createElement("input");
-		delButton.type = "image";
-		delButton.className = "delete-button";
-		delButton.src = "delete.png";
-		delButton.alt = "X";
-		delButton.data = d;
-		delButton.addEventListener("click", function(e){
-			chrome.extension.sendMessage({ type: "delete-event", data: e.target.data.id });
-		});
-		rightDiv.appendChild(delButton);
-
-		newDiv.appendChild(rightDiv);
-		// END: rightDiv
-
+    newDiv.appendChild(document.createTextNode(d.stringRep));
     eventListDiv.appendChild(newDiv);
+
+
+
+    //var newDiv = document.createElement("div");
+		//newDiv.className = "event-div";
+		//newDiv.style.backgroundColor = (i%2==0 ? "#80CBC4" : "#B2DFDB");
+
+		//// BEGIN: leftDiv
+		//var leftDiv = document.createElement("div");
+		//leftDiv.className = "left-div";
+
+		//var textNode = document.createTextNode(d.stringRep + "\n");
+		//leftDiv.appendChild(textNode);
+
+		//newDiv.appendChild(leftDiv);
+		//// END: leftDiv
+
+		//// BEGIN: rightDiv
+		//var rightDiv = document.createElement("div");
+		//rightDiv.className = "right-div";
+
+		//var delButton = document.createElement("input");
+		//delButton.type = "image";
+		//delButton.className = "delete-button";
+		//delButton.src = "delete.png";
+		//delButton.alt = "X";
+		//delButton.data = d;
+		//delButton.addEventListener("click", function(e){
+		//	chrome.extension.sendMessage({ type: "delete-event", data: e.target.data.id });
+		//});
+		//rightDiv.appendChild(delButton);
+
+		//newDiv.appendChild(rightDiv);
+		//// END: rightDiv
+
+    //eventListDiv.appendChild(newDiv);
 
 		i++;
   });
