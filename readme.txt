@@ -1,6 +1,6 @@
 QuickCalView Chrome Extension
 
-This is a simple chrome extension I created to provide a quick view of upcoming calendar events + tasks, and to create new ones. This is for personal use, so it is not intended for wide use.  
+This is a simple chrome extension I created to provide a quick view of upcoming calendar events + tasks, and to create new ones.  
 
 There are 4 types of items this works with:
 
@@ -58,9 +58,4 @@ http://momentjs.com
 jsTimezoneDetect:
 jstz.js library freely provided under MIT license
 http://bitbucket.org/pellepim/jstimezonedetect
-
-Icons: 
-Thanks to paomedia (iconfinder.com/paomedia)
-Used under Creative Commons License Attribution 3.0 Unported
-[creativecommons.org/licenses/by/3.0]
 

@@ -1,7 +1,7 @@
 var defaultDateTime = moment.tz("2000-01-01", "America/New_York");
 var EST = "America/New_York";
 
-var dayOfWeek = ['N', 'M', 'T', 'W', 'R', 'F', 'S'];
+var dayOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
 var fullDateFormat = "YYYY-MM-DD\\THH:mm:ssZ";
 

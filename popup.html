@@ -1,39 +1,96 @@
 <!doctype html>
 <html>
-  <head>
-    <title>QuickCalView</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <script src="moment.min.js"></script>
-    <script src="moment-timezone.min.js"></script>
-    <script src="jstz-1.0.4.min.js"></script>
-    <script src="time_util.js"></script>
-    <script src="constants.js"></script>
-    <script src="popup.js"></script>
-    <script src="https://apis.google.com/js/client.js?onload=onPopupLoad"></script>
-  </head>
-  <body>
-    <div id="authorize-div" style="display: none">
-      <span>Authorize access to Google Calendar API</span>
-      <!--Button for the user to click to initiate auth sequence -->
-      <button id="authorize-button">
-        Authorize
-      </button>
-    </div>
-    <div id="content-div" style="display: none">
-			<div id="info-div">
+	<head>
+		<title>QuickCalView</title>
+		<link href='https://fonts.googleapis.com/css?family=Roboto+Condensed:400,700,300' rel='stylesheet' type='text/css'>
+		<link rel="stylesheet" type="text/css" href="styles.css">
+		<script src="moment.min.js"></script>
+		<script src="moment-timezone.min.js"></script>
+		<script src="jstz-1.0.4.min.js"></script>
+		<script src="time_util.js"></script>
+		<script src="constants.js"></script>
+		<script src="popup.js"></script>
+		<script src="https://apis.google.com/js/client.js?onload=onPopupLoad"></script>
+	</head>
+	<body>
+		<div id="authorize-div" style="display: none">
+			<span>Authorize access to Google Calendar API</span>
+			<!--Button for the user to click to initiate auth sequence -->
+			<button id="authorize-button">
+				Authorize
+			</button>
+		</div>
+		<div id="content-div" style="display: none">
+			<div id="top-bar-div">
+			<table>
+				<tr>
+					<td>
+						<div id="timezone-div"></div>
+					</td>
+					<td>
+						<div id="calendar-link-div">
+							<a id="calendar-link" href="https://www.google.com/calendar" >Calendar</a>
+						</div>
+					</td>
+				</tr>
+			</table>
 			</div>
-			<!-- Div Containing the Create Event Form -->
-      <div id="create-event-div">
-				<input type="image" id="refresh-button" src="sync.png" alt="Sync" />
-				<input type="text" id="create-event-text"></input>
-				<input type="image" id="create-event-button" src="create.png" alt="Create" />
-      </div>
+				<!-- Div Containing the Create Event Form -->
+			<div id="create-event-div">
+					<input type="image" id="refresh-button" src="refresh_white.png" alt="Sync" />
+					<input type="text" id="create-event-text"></input>
+					<input type="image" id="create-event-button" src="plus_white.png" alt="Create" />
+			</div>
+			<div id="help-link-div">
+				<a id="show-help-link" href="#">Create Event Help</a>
+			</div>
+			<div id="shadow-div"> 
+			</div>
 
-			<!-- Div Containing the Event List (Populated by javascript) -->
-      <div id="event-list-div">
+				<!-- Div Containing the Event List (Populated by javascript) -->
+			<div id="event-list-div"></div>
+			<div id="help-div">
+				<div id="inner-help-div">
+				To create an event, type its description into the text bar 
+				and press enter.
+				<br />
+				<br />
+				Here are some example ways of creating an event:
+				<br />
+				<ul>
+				<li>
+					todo: Write thank you letter to John
+				</li>
+				<li>
+					due Nov 3: Pay phone bill
+				</li>
+				<li>
+					Dec 25: Christmas
+				</li>
+				<li>
+					Dec 23-30: Christmas Vacation
+				</li>
+				<li>
+					Jan 29-2: Chicago Trip (carries over to Feb 2)
+				</li>
+				<li>
+					Jan 4 @14: Doctor's Appt (defaults to 1 hr)
+				</li>
+				<li>
+					Jan 5 @8.30: Breakfast with Julie
+				</li>
+				<li>
+					Jan 6 @11-13: Lunch meeting with Bob
+				</li>
+				<li>
+					Jan 11 @20.30-23.00: Movie Night
+				</li>
+				</ul>
+				Events are specified in 24 hour time. 
+				</div>
 
-      </div>
-    </div>
-  </body>
+			</div>
+		</div>
+	</body>
 </html>
 

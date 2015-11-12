@@ -98,7 +98,7 @@ var EventManager = function(){
 
 		// Tell the google api to create the event
     if(this.authToken != null){
-      if(e.getType() === TASK){
+      if(e.eventType === TASK){
         api_postTask(this.authToken, e);
       } else {
         api_postCalendarEvent(this.authToken, e);
@@ -125,7 +125,7 @@ var EventManager = function(){
 		this.events.splice(i, 1);
 
 		// Tell the google api to delete the event
-		if(e.getType() === TASK){
+		if(e.eventType === TASK){
 			api_putTaskCompleted(this.authToken, e);
 		} else {
 			api_deleteCalendarEvent(this.authToken, e);
@@ -147,6 +147,7 @@ var EventManager = function(){
 //   Can have a due date or not
 var Task = function(){
   this.id = null;
+  this.eventType = TASK;
   this.title = "";
 	this.dueDate = null;
  
@@ -196,10 +197,6 @@ var Task = function(){
 		}
   };
 
-	// Return either TASK or CALENDAR_EVENT
-	this.getType = function(){
-		return TASK;
-	}
 
   this.getTime = function(){
     if(this.dueDate == null){
@@ -233,6 +230,7 @@ var Task = function(){
 var CalendarEvent = function(){
   this.id = null;
   this.summary = "";
+  this.eventType = CALENDAR_EVENT;
   
   this.start = moment.tz(curTZ());
   this.end = moment.tz(curTZ());
@@ -324,18 +322,19 @@ var CalendarEvent = function(){
 		if(this.start.hour() == 0){
 			var endDay = this.end.clone().subtract(1, "day");
 			if(this.start.date() != endDay.date()){
-				str += "-" + endDay.format("D")
+				// multi-day event
+				str += " - " + endDay.format("D") + " " + getDOW(endDay);
 			}
 		} else {
-			str += " @" + this.start.format("h");
-			if(this.start.minute() > 0){
-				str += ":" + this.start.format("mm");
-			}
+			str += " @" + this.start.format("H.mm");
+			//if(this.start.minute() > 0){
+			//	str += "." + this.start.format("mm");
+			//}
 			if(!this.start.clone().add(1, "hour").isSame(this.end)){
-				str += "-" + this.end.format("h");
-				if(this.end.minute() > 0){
-					str += ":" + this.end.format("mm");
-				}
+				str += "-" + this.end.format("H.mm");
+				//if(this.end.minute() > 0){
+				//	str += "." + this.end.format("mm");
+				//}
 			}
 		}
     str += ": " + this.summary;
@@ -345,12 +344,6 @@ var CalendarEvent = function(){
   this.getTime = function(){
     return this.start;
   }
-
-
-	// Returns either TASK or CALENDAR_EVENT
-	this.getType = function(){
-		return CALENDAR_EVENT;
-	}
   
 	// Calculate a string to use when sorting the events (timestamp)
   this.calcSortKey = function(){

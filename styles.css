@@ -7,21 +7,44 @@ html{
 body{
   width:500px;
   height:480px;
-  background-color: #E0F2F1;
+  background-color: #FFFFFF;
 }
 
-#info-div{
-	font-family: monospace;
+#top-bar-div{
+	width: 500px;
+	height: 20px;
+	font-family: 'Roboto Condensed', sans-serif;
 	font-size: small;
 	font-weight: bold;
 	color: #FFFFFF;
-   background-color: #00796B;
+    background-color: #006050;
 }
 
-#event-list-div{
+#timezone-div{
+	width: 240px;
+}
+
+#calendar-link-div{
+	width: 240px;
+	text-align: right;
+}
+a:link{
+	color: #FFFFFF;
+}
+a:hover{
+	color: #FFFFFF;
+}
+a:active{
+	color: #FFFFFF;
+}
+a:visited{
+	color: #FFFFFF;
 }
 
 #create-event-div{
+	padding-top: 10px;
+	width: 500px;
+	height: 40px;
   background-color: #00796B;
 	clear: both;
 }
@@ -48,31 +71,156 @@ body{
 	width: 30px;
 }
 
-.event-div{
-	clear: both;
-	height: 30px;
+#help-link-div{
 	width: 500px;
-	color: #000000;
-	margin-top: 5px;
-}
-
-.left-div{
-	float: left;
-	font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	height: 20px;
+	font-family: 'Roboto Condensed', sans-serif;
 	font-size: small;
 	font-weight: bold;
-	width: 450px;
-	padding-top: 5px;
-	padding-left: 5px;
+	color: #FFFFFF;
+    background-color: #00796B;
+	padding-left: 50px;
 }
 
-.right-div{
-	float: right;
-	width: 30px;
+#shadow-div{
+	margin: 0px;
+	border: 0px;
+	padding: 0px;
+	width: 500px;
+	height: 8px;
+	background-image: url("shade.png");
+}
+
+#event-list-div{
+}
+
+.divider-div{
+	width: 500px;
+	height: 30px;
+	color: #777777;
+	background-color: #EEEEEE;
+	font-size: 14px;
+	font-weight: bold;
+	padding-left: 10px;
+	padding-top: 5px;
+	border-width: 1px;
+	border-top-width: 0px;
+	border-color: #DDDDDD;
+	border-style: solid;
+}
+
+/* CLASSES FOR EVENTS */
+
+.event-container-div{
+	width: 500px;
+	height: 42px;
+	margin: 0px;
+	margin-top: -2px;
+	padding: 0px;
+	border-width: 1px;
+	border-top-width: 0px;
+	border-color: #DDDDDD;
+	border-style: solid;
+	font-family: 'Roboto Condensed', sans-serif;
+}
+
+.event-table{
+	width: 500px;
+	height: 40px;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+}
+
+.event-table-row{
+	width: 500px;
+	height: 40px;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+}
+
+/* EVENT COLOR */
+.event-color-col{
+	/*background-color: #66FFFF;*/
+	width: 10px;
+	height: 40px;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+}
+
+/* EVENT LABEL */
+.event-label-col{
+	width: 70px;
+	margin: 0px;
+	padding: 0px;
+	color: #AAAAAA;
+	font-size: 20px;
+	vertical-align: center;
+}
+
+/* EVENT INFO SECTION */
+.event-info-col{
+	width: 360px;
+	height: 40px;
+	margin: 0px;
+	padding: 0px;
+}
+.todo-event-text-div{
+	width: 360px;
+	margin: 0px;
+	padding: 0px;
+	font-size: 20px;
+	vertical-align: center;
+}
+.event-text-div{
+	width: 360px;
+	height: 25px;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
+	font-size: 20px;
+}
+.event-time-div{
+	width: 360px;
+	height: 15px;
+	margin: 0px;
+	padding: 0px;
+	padding-left: 10px;
+	border: 0px;
+	color: #888888;
+}
+
+/* DELETE BUTTON */
+.event-delete-col{
+	width: 40px;
+	height: 40px;
+	margin: 0px;
+	padding: 0px;
+	border: 0px;
 }
 
 .delete-button{
-	width: 20px;
-	height: 20px;
-	margin-top: 2px;
+	width: 30px;
+	height: 30px;
+	margin-top: 4px;
 }
+
+#help-div{
+	margin: 0px;
+	padding-top: 5px;
+	padding-left: 10px;
+	padding-right: 10px;
+	width: 500px;
+	height: 400px;
+	border-width: 1px;
+	border-top-width: 0px;
+	border-color: #DDDDDD;
+	border-style: solid;
+	font-size: 16px;
+	color: #444444;
+	font-family: 'Roboto Condensed', sans-serif;
+}
+
+

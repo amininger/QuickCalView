@@ -12,7 +12,7 @@ var DELETE_EVENT = "delete-event";
 var TASK = "task";
 var CALENDAR_EVENT = "calendar-event";
 
-var TODO_SECTION = "todo-section";
-var TODAY_SECTION = "today-section";
-var WEEK_SECTION = "week-section";
-var OTHERS_SECTION = "others-section";
+var TODO_SECTION = "Todo";
+var TODAY_SECTION = "Today";
+var WEEK_SECTION = "This Week";
+var OTHERS_SECTION = "Future";

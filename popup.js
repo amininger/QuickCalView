@@ -18,8 +18,9 @@ function onPopupLoad(){
   console.log("popup: onPopupLoad()");
  
   addButtonListeners();
-  //showAuthDiv();
+  showAuthDiv();
   showContentDiv();
+  onShowHelpLinkClick(null);
    
   //chrome.extension.sendMessage({ type: DATA_REQUEST });
   chrome.extension.sendMessage({ type: TEST_DATA_REQUEST });
@@ -71,6 +72,12 @@ function addButtonListeners(){
 
 	var createEventText = document.getElementById('create-event-text');
 	createEventText.addEventListener("keypress", onCreateEventKeypress);
+
+	var calendarLink = document.getElementById('calendar-link');
+	calendarLink.addEventListener("click", onCalendarLinkClick);
+	
+	var showHelpLink = document.getElementById('show-help-link');
+	showHelpLink.addEventListener("click", onShowHelpLinkClick);
 }
 
 // onAuthorizeClick(e)
@@ -122,14 +129,148 @@ function onCreateEventKeypress(event){
 	return false;
 }
 
+function onCalendarLinkClick(event){
+	chrome.tabs.create({ url: "https://www.google.com/calendar", active: true });
+}
+
+var showHelp = true;
+function onShowHelpLinkClick(event){
+	showHelp = !showHelp;
+	var helpDiv = document.getElementById('help-div');
+	var eventListDiv = document.getElementById('event-list-div');
+	var showHelpLink = document.getElementById('show-help-link');
+	
+	if(showHelp){
+		showHelpLink.innerHTML = "Hide Create Event Help";
+		helpDiv.style.display = 'block';
+		eventListDiv.style.display = 'none';
+	} else {
+		showHelpLink.innerHTML = "Show Create Event Help";
+		helpDiv.style.display = 'none';
+		eventListDiv.style.display = 'block';
+	}
+}
+
+
+
 //========================================
 // Display the events in the popup
 //========================================
+function createDividerDiv(title){
+	var dividerDiv = document.createElement("div");
+	dividerDiv.className = "divider-div";
+	dividerDiv.appendChild(document.createTextNode(title));
+	return dividerDiv;
+}
+
+function createEventDiv(e){
+	var elementMap = new Object();
+	elementMap.topDiv = document.createElement("div");
+	elementMap.topDiv.className = "event-container-div";
+	
+	elementMap.table = document.createElement("table");
+	elementMap.table.className = "event-table";
+	
+	elementMap.row = document.createElement("tr");
+	elementMap.row.className = "event-table-row";
+	
+	elementMap.colorCol = document.createElement("td");
+	elementMap.colorCol.className = "event-color-col";
+	
+	elementMap.labelCol = document.createElement("td");
+	elementMap.labelCol.className = "event-label-col";
+	
+	elementMap.infoCol = document.createElement("td");
+	elementMap.infoCol.className = "event-info-col";
+	
+	elementMap.textDiv = document.createElement("div");
+	elementMap.textDiv.className = "event-text-div";
+	
+	elementMap.timeDiv = document.createElement("div");
+	elementMap.timeDiv.className = "event-time-div";
+	
+	elementMap.deleteCol = document.createElement("td");
+	elementMap.deleteCol.className = "event-delete-col";
+	
+	var delButton = document.createElement("input");
+	delButton.type = "image";
+	delButton.className = "delete-button";
+	delButton.src = "delete_gray.png";
+	delButton.alt = "X";
+	delButton.data = e;
+	delButton.addEventListener("click", function(e){
+		chrome.extension.sendMessage({ type: "delete-event", data: e.target.data.id });
+	});
+	elementMap.deleteCol.appendChild(delButton);
+	
+	elementMap.topDiv.appendChild(elementMap.table);
+	elementMap.table.appendChild(elementMap.row);
+	elementMap.row.appendChild(elementMap.colorCol);
+	elementMap.row.appendChild(elementMap.labelCol);
+	elementMap.row.appendChild(elementMap.infoCol);
+	elementMap.row.appendChild(elementMap.deleteCol);
+	elementMap.infoCol.appendChild(elementMap.textDiv);
+	elementMap.infoCol.appendChild(elementMap.timeDiv);
+	
+	return elementMap;
+}
+
+function createToDoEventDiv(e){
+    var todoDivElements = createEventDiv(e);
+	todoDivElements.labelCol.appendChild(document.createTextNode("TODO"));
+	todoDivElements.infoCol.removeChild(todoDivElements.timeDiv);
+	todoDivElements.textDiv.className = "todo-event-text-div";
+	var colon = e.stringRep.indexOf(":");
+	todoDivElements.textDiv.appendChild(document.createTextNode(e.stringRep.substring(colon+2)));
+	
+	return todoDivElements.topDiv;
+}
+
+function createTodayEventDiv(e){
+    var todayDivElements = createEventDiv(e);
+	var colon = e.stringRep.indexOf(":");
+	var start = moment.tz(e.sortTime, curTZ());
+	if(e.eventType === TASK){
+		todayDivElements.labelCol.appendChild(document.createTextNode("DUE"));
+	} else if(start.hour() == 0){
+		todayDivElements.labelCol.appendChild(document.createTextNode("NOW"));
+	} else {
+		todayDivElements.labelCol.appendChild(document.createTextNode(start.format("h:mm")));
+	}
+
+	todayDivElements.textDiv.appendChild(document.createTextNode(e.stringRep.substring(colon+2)));
+	todayDivElements.timeDiv.appendChild(document.createTextNode(e.stringRep.substring(0, colon)));
+	
+	return todayDivElements.topDiv;
+}
+
+function createWeekEventDiv(e){
+    var weekDivElements = createEventDiv(e);
+	var start = moment.tz(e.sortTime, curTZ());
+	weekDivElements.labelCol.appendChild(document.createTextNode(getDOW(start)));
+	var colon = e.stringRep.indexOf(":");
+	weekDivElements.textDiv.appendChild(document.createTextNode(e.stringRep.substring(colon+2)));
+	weekDivElements.timeDiv.appendChild(document.createTextNode(e.stringRep.substring(0, colon)));
+	
+	return weekDivElements.topDiv;
+}
+
+function createOtherEventDiv(e){
+    var otherDivElements = createEventDiv(e);
+	var start = moment.tz(e.sortTime, curTZ());
+	otherDivElements.labelCol.appendChild(document.createTextNode(start.format("M/DD")));
+	var colon = e.stringRep.indexOf(":");
+	otherDivElements.textDiv.appendChild(document.createTextNode(e.stringRep.substring(colon+2)));
+	otherDivElements.timeDiv.appendChild(document.createTextNode(e.stringRep.substring(0, colon)));
+	
+	return otherDivElements.topDiv;
+}
+
 function populateData(data, timeZone){
   console.log("popup: populateData()");
   console.log(data);
 
-	var infoDiv = document.getElementById('info-div');
+	var infoDiv = document.getElementById('timezone-div');
 	infoDiv.innerHTML = "&nbspTimeZone: " + timeZone;
   
   var eventListDiv = document.getElementById('event-list-div');
@@ -142,76 +283,56 @@ function populateData(data, timeZone){
   var today = moment.tz(curTZ()).startOf('day').add(1, "day");
   var week = moment.tz(curTZ()).startOf('day').add(7, "day");
 
-  var addedHeader = false;
-  var sectionType = TODO_SECTION;
-  
-	var i = 0;
   // Add new data
   data.forEach(function(d){
-    if(!addedHeader){
-      var todoDiv = document.createElement("div");
-      todoDiv.appendChild(document.createTextNode(sectionType));
-      eventListDiv.appendChild(todoDiv);
-      addedHeader = true;
-    }
-
-    var itemType;
-    if(d.stringRep.startsWith("todo")){
-      itemType = TODO_SECTION;
+	if(d.stringRep.toLowerCase().startsWith("todo")){
+      d.itemType = TODO_SECTION;
     } else if(moment.tz(d.sortTime, curTZ()).isBefore(today)){
-      itemType = TODAY_SECTION;
+      d.itemType = TODAY_SECTION;
     } else if(moment.tz(d.sortTime, curTZ()).isBefore(week)){
-      itemType = WEEK_SECTION;
+      d.itemType = WEEK_SECTION;
     } else {
-      itemType = OTHERS_SECTION;
+      d.itemType = OTHERS_SECTION;
     }
-
-    if(itemType != sectionType){
-      sectionType = itemType;
-      addedHeader = false;
-    }
-
-    var newDiv = document.createElement("div");
-    newDiv.appendChild(document.createTextNode(d.stringRep));
-    eventListDiv.appendChild(newDiv);
-
-
-
-    //var newDiv = document.createElement("div");
-		//newDiv.className = "event-div";
-		//newDiv.style.backgroundColor = (i%2==0 ? "#80CBC4" : "#B2DFDB");
-
-		//// BEGIN: leftDiv
-		//var leftDiv = document.createElement("div");
-		//leftDiv.className = "left-div";
-
-		//var textNode = document.createTextNode(d.stringRep + "\n");
-		//leftDiv.appendChild(textNode);
-
-		//newDiv.appendChild(leftDiv);
-		//// END: leftDiv
-
-		//// BEGIN: rightDiv
-		//var rightDiv = document.createElement("div");
-		//rightDiv.className = "right-div";
-
-		//var delButton = document.createElement("input");
-		//delButton.type = "image";
-		//delButton.className = "delete-button";
-		//delButton.src = "delete.png";
-		//delButton.alt = "X";
-		//delButton.data = d;
-		//delButton.addEventListener("click", function(e){
-		//	chrome.extension.sendMessage({ type: "delete-event", data: e.target.data.id });
-		//});
-		//rightDiv.appendChild(delButton);
-
-		//newDiv.appendChild(rightDiv);
-		//// END: rightDiv
-
-    //eventListDiv.appendChild(newDiv);
-
-		i++;
+  });
+  
+  // Todo Events
+  eventListDiv.appendChild(createDividerDiv(TODO_SECTION));
+  data.forEach(function(e){
+	  if(e.itemType === TODO_SECTION){
+		eventListDiv.appendChild(createToDoEventDiv(e));
+	  }
+  });
+  
+  // Events that happen today
+  eventListDiv.appendChild(createDividerDiv(TODAY_SECTION));
+  // First due tasks
+  data.forEach(function(e){
+	  if(e.itemType === TODAY_SECTION && e.eventType === TASK){
+		eventListDiv.appendChild(createTodayEventDiv(e));
+	  }
+  });
+  // Then events
+  data.forEach(function(e){
+	  if(e.itemType === TODAY_SECTION && e.eventType !== TASK){
+		eventListDiv.appendChild(createTodayEventDiv(e));
+	  }
+  });
+  
+  // Events that happen this week
+  eventListDiv.appendChild(createDividerDiv(WEEK_SECTION));
+  data.forEach(function(e){
+	  if(e.itemType === WEEK_SECTION){
+		eventListDiv.appendChild(createWeekEventDiv(e));
+	  }
+  });
+  
+  // Other future events
+  eventListDiv.appendChild(createDividerDiv(OTHERS_SECTION));
+  data.forEach(function(e){
+	  if(e.itemType === OTHERS_SECTION){
+		eventListDiv.appendChild(createOtherEventDiv(e));
+	  }
   });
 }
 
